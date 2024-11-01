@@ -4,7 +4,6 @@ import numpy as np
 import time
 
 # Example with random data
-# rows = 100000
 rows = 10000
 cols = 500
 np.random.seed(699)
@@ -16,7 +15,6 @@ knn = KNNClassifier(k=2)
 knn.fit(X_train, y_train)
 
 # Create random indices to test
-# test_size = 1000
 test_size = 100
 X_test = np.random.randint(rows, size=test_size)
 
@@ -40,7 +38,7 @@ time_mp = end - start
 print(f'Elapsed time for predict_multiprocess {time_mp}')
 print(f'Speedup using multiprocessing {round((time_single)/(time_mp),2)}')
 # Calculate the number of equal elements
-print(f'correct {np.sum(y_train[X_test] == predictions)}')
+print(f'correct {np.sum(y_train[X_test] == predictions_mp)}')
 # compare the output of both methods
 if np.all(predictions == predictions_mp):
     print('All predictions are exactly equal')
@@ -53,7 +51,7 @@ else:
 knn_dask = KNNClassifierDask(k=2)
 knn_dask.fit(X_train, y_train)
 start = time.time()
-predictions_dask = knn_dask.predict_parallel(X_train[X_test])
+predictions_dask = knn_dask.predict(X_train[X_test])
 end = time.time()
 time_dask = end-start
 print(f'Elapsed time for predict_parallel {time_dask}')

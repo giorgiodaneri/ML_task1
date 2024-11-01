@@ -6,6 +6,7 @@ import psutil
 class KNNClassifier:
     def __init__(self, k=3):
         self.k = k
+        self.threads_count = int(psutil.cpu_count(logical=False) / 4)
 
     def fit(self, X, y):
         self.X_train = X
@@ -22,14 +23,12 @@ class KNNClassifier:
         return np.array(y_pred)
     
     def predict_multiprocess(self, X):
-        # get number of available threads
-        threads_count = psutil.cpu_count(logical=False)
-        print(f'Using {threads_count} threads')
+        print(f'Using {self.threads_count} threads')
         # split the data in as many parts as threads
         n = X.shape[0]
-        parts = np.array_split(X, threads_count)
+        parts = np.array_split(X, self.threads_count)
         # Create a pool of workers
-        pool = Pool(threads_count)
+        pool = Pool(self.threads_count)
         # Run the prediction in parallel by mapping the function to each part of the input data
         results = pool.map(self.predict, parts)
         # Close the pool
