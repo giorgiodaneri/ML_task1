@@ -2,11 +2,12 @@ import numpy as np
 import dask.array as da
 from multiprocessing import Pool
 import psutil
+from joblib import Parallel,delayed 
 
 class KNNClassifier:
     def __init__(self, k=3):
         self.k = k
-        self.threads_count = int(psutil.cpu_count(logical=False) / 4)
+        self.threads_count = int(psutil.cpu_count(logical=False) / 2)
 
     def fit(self, X, y):
         self.X_train = X
@@ -20,6 +21,13 @@ class KNNClassifier:
 
     def predict(self, X):
         y_pred = [self._predict(x) for x in X]
+        return np.array(y_pred)
+    
+    def predict_joblib(self, X):
+        print(f'Using {self.threads_count} threads')
+        # run the prediction in parallel using joblib
+        y_pred = Parallel(n_jobs=self.threads_count)(delayed(self._predict)(x) for x in X)
+        # y_pred = [self._predict(x) for x in X]
         return np.array(y_pred)
     
     def predict_multiprocess(self, X):

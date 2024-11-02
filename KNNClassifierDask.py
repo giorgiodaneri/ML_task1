@@ -1,12 +1,13 @@
 import numpy as np
 import dask.array as da
 from dask import delayed, compute
+from dask.distributed import LocalCluster, Client
 import psutil
 
 class KNNClassifierDask:
     def __init__(self, k=3):
         self.k = k
-        self.threads_count = int(psutil.cpu_count(logical=False) / 4)
+        self.threads_count = int(psutil.cpu_count(logical=False) / 16)
 
     def fit(self, X, y):
         self.X_train = da.from_array(X, chunks=(X.shape[0] // self.threads_count, X.shape[1]))
