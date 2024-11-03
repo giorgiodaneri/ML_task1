@@ -5,9 +5,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# out and err files
+# out err and profiler files
 *.out
 *.err
+*.txt
+*.lprof
 
 # C extensions
 *.so

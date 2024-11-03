@@ -1,8 +1,7 @@
 #!/bin/bash -l              
-### Request a single task using one core on one node for 5 minutes in the batch queue
 #SBATCH -N 1
-#SBATCH --ntasks-per-node=1
-#SBATCH -c 64
+#SBATCH --ntasks-per-node=128
+#SBATCH -c 1
 #SBATCH --time=0-00:30:00
 #SBATCH -p batch
 #SBATCH --output=job-%j.out

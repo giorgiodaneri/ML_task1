@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 # Example with random data
-rows = 100000
+rows = 10000
 cols = 500
 np.random.seed(699)
 X_train = np.random.rand(rows*cols).reshape((rows,cols))
@@ -15,15 +15,15 @@ knn = KNNClassifier(k=2)
 knn.fit(X_train, y_train)
 
 # Create random indices to test
-test_size = 1000
+test_size = 100
 X_test = np.random.randint(rows, size=test_size)
 
 # Generate Predictions and measure time
 start = time.time()
-# predictions = knn.predict(X_train[X_test])
+predictions = knn.predict(X_train[X_test])
 end = time.time()
-# time_single = end-start
-time_single = 849.47
+time_single = end-start
+# time_single = 849.47
 print(f'Elapsed time for predict {time_single}')
 #print(f'Prediction {predictions}')
 #print(f'Label      {y_train[X_test]}')
@@ -79,7 +79,3 @@ print(f'correct {np.sum(y_train[X_test] == predictions_joblib)}')
 #     print('All predictions are exactly equal')
 # elif np.allclose(predictions, predictions_joblib, rtol=1e-05, atol=1e-08):
 #         print('All predictions are close')
-
-
-
-
