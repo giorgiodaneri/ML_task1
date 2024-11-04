@@ -1,7 +1,6 @@
 import numpy as np
 import dask.array as da
 from dask import delayed, compute
-from dask.distributed import LocalCluster, Client
 import psutil
 
 class KNNClassifierDask:
