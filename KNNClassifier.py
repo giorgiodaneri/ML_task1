@@ -94,7 +94,6 @@ class KNNClassifierNumba:
 
     @profile
     def predict(self, X):
-        print(f'Using {self.threads_count} threads')
         y_pred = np.empty(X.shape[0], dtype=np.int32)
         for i in range(X.shape[0]):
             y_pred[i] = self._predict(X[i])

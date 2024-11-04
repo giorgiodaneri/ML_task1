@@ -7,21 +7,19 @@ import psutil
 from numba import int32
 
 # Example with random data
-rows = 10000
+rows = 100000
 cols = 500
 np.random.seed(699)
 X_train = np.random.rand(rows*cols).reshape((rows,cols))
 y_train = int32(np.random.randint(2, size=rows))
 print(f'X_train shape {X_train.shape} - y_train shape {y_train.shape}')
 
-threads = int32(psutil.cpu_count(logical=False))
-# convert threads to int32
-
+threads = int(psutil.cpu_count(logical=False) / 2)
 knn = KNNClassifier(k=2, threads_count=threads)
 knn.fit(X_train, y_train)
 
 # Create random indices to test
-test_size = 100
+test_size = 1000
 X_test = np.random.randint(rows, size=test_size)
 
 # Generate Predictions and measure time
@@ -38,7 +36,9 @@ print(f'correct {np.sum(y_train[X_test] == predictions)}')
 
 #################### Test Numba implementation ####################
 print('----- Testing Numba implementation -----')
-knn_numba = KNNClassifierNumba(k=2)
+threads = int32(threads)
+knn_numba = KNNClassifierNumba(k=2, threads_count=threads)
+print(f'Using {knn.threads_count} threads')
 knn_numba.fit(X_train, y_train)
 start = time.time()
 predictions_numba = knn_numba.predict(X_train[X_test])
