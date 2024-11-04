@@ -5,6 +5,7 @@ from joblib import Parallel, delayed
 from line_profiler import profile
 from numba import float64, int32
 from numba.experimental import jitclass
+from numba import njit
 
 class KNNClassifier:
     def __init__(self, k=3, threads_count=8):
@@ -111,3 +112,24 @@ class KNNClassifierNumba:
         # Return the most common class label among the k nearest neighbors
         most_common = np.bincount(k_nearest_labels).argmax()
         return most_common
+    
+@njit
+def predict_single_numba(X_train, y_train, k, x):
+    distances = np.empty(X_train.shape[0])
+    for i in range(X_train.shape[0]):
+        distances[i] = np.sqrt(np.sum((x - X_train[i]) ** 2))
+    k_indices = np.argsort(distances)[:k]
+    k_nearest_labels = y_train[k_indices]
+    return np.bincount(k_nearest_labels).argmax()
+
+# Function to run predictions in parallel
+def predict_parallel_numba(knn, X_test):
+    # Extract the necessary data from knn to pass to the parallel function
+    X_train = knn.X_train
+    y_train = knn.y_train
+    k = knn.k
+    # Parallel processing using extracted data
+    y_pred = Parallel(n_jobs=knn.threads_count)(
+        delayed(predict_single_numba)(X_train, y_train, k, x) for x in X_test
+    )
+    return y_pred
