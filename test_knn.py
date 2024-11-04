@@ -28,7 +28,7 @@ print(f'Elapsed time for predict {time_single}')
 #print(f'Prediction {predictions}')
 #print(f'Label      {y_train[X_test]}')
 # Calculate the number of equal elements
-# print(f'correct {np.sum(y_train[X_test] == predictions)}')
+print(f'correct {np.sum(y_train[X_test] == predictions)}')
 
 #################### Test Multiprocessing implementation ####################
 start = time.time()
@@ -41,12 +41,12 @@ print(f'Speedup using multiprocessing {round((time_single)/(time_mp),2)}')
 # Calculate the number of equal elements
 print(f'correct {np.sum(y_train[X_test] == predictions_mp)}')
 # compare the output of both methods
-# if np.all(predictions == predictions_mp):
-#     print('All predictions are exactly equal')
-# elif np.allclose(predictions, predictions_mp, rtol=1e-05, atol=1e-08):
-#         print('All predictions are close')
-# else: 
-#     print('ERROR: predictions are different')
+if np.all(predictions == predictions_mp):
+    print('All predictions are exactly equal')
+elif np.allclose(predictions, predictions_mp, rtol=1e-05, atol=1e-08):
+        print('All predictions are close')
+else: 
+    print('ERROR: predictions are different')
 
 #################### Test Dask implementation ####################
 knn_dask = KNNClassifierDask(k=2)
@@ -60,10 +60,12 @@ print(f'Speedup using Dask {round((time_single)/(time_dask),2)}')
 # Calculate the number of equal elements
 print(f'correct {np.sum(y_train[X_test] == predictions_dask)}')
 # compare the output of both methods
-# if np.all(predictions == predictions_dask):
-#     print('All predictions are exactly equal')
-# elif np.allclose(predictions, predictions_dask, rtol=1e-05, atol=1e-08):
-#         print('All predictions are close')
+if np.all(predictions == predictions_dask):
+    print('All predictions are exactly equal')
+elif np.allclose(predictions, predictions_dask, rtol=1e-05, atol=1e-08):
+        print('All predictions are close')
+else:
+    print('ERROR: predictions are different')
 
 #################### Test Joblib implementation ####################
 start = time.time()
@@ -75,7 +77,9 @@ print(f'Speedup using Joblib {round((time_single)/(time_joblib),2)}')
 # Calculate the number of equal elements
 print(f'correct {np.sum(y_train[X_test] == predictions_joblib)}')
 # compare the output of both methods
-# if np.all(predictions == predictions_joblib):
-#     print('All predictions are exactly equal')
-# elif np.allclose(predictions, predictions_joblib, rtol=1e-05, atol=1e-08):
-#         print('All predictions are close')
+if np.all(predictions == predictions_joblib):
+    print('All predictions are exactly equal')
+elif np.allclose(predictions, predictions_joblib, rtol=1e-05, atol=1e-08):
+    print('All predictions are close')
+else:
+    print('ERROR: predictions are different')

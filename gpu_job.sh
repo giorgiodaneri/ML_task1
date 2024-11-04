@@ -1,13 +1,15 @@
-#!/bin/bash -l              
-### Request a single task using one core on one node for 5 minutes in the batch queue
+#!/bin/bash -l
+### Request one GPU tasks for 4 hours - dedicate 1/4 of available cores for its management
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
-#SBATCH -c 128
-#SBATCH --time=0-00:10:00
-#SBATCH -p batch
+#SBATCH -c 8
+#SBATCH -G 1
+#SBATCH --time=00:10:00
+#SBATCH -p gpu
 #SBATCH --output=job-%j.out
 #SBATCH --error=job-%j.err
 #SBATCH --job-name="ML_task1"
+
 # Load the required modules
 module purge
 module load lang/Python/3.8.6-GCCcore-10.2.0

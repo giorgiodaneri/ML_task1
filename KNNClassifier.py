@@ -4,8 +4,16 @@ from multiprocessing import Pool
 import psutil
 from joblib import Parallel,delayed 
 from line_profiler import profile
-from numba import jit
+from numba import njit, prange, jitclass
 
+spec = [
+    ('k', int),
+    ('threads_count', int),
+    ('X_train', np.array),
+    ('y_train', np.array),
+]
+
+@jitclass(spec)
 class KNNClassifier:
     def __init__(self, k=3):
         self.k = k
@@ -23,14 +31,8 @@ class KNNClassifier:
     
     @profile
     def predict(self, X):
-        y_pred = [self._predict(x) for x in X]
+        y_pred = [self._predict_gpu(x) for x in X]
         return np.array(y_pred)
-    
-    @jit
-    def predict_gpu(self, X):
-        y_pred = [self._predict(x) for x in X]
-        return np.array(y_pred)
-        
     
     @profile
     def predict_joblib(self, X):
