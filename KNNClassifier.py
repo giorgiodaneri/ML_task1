@@ -33,13 +33,11 @@ class KNNClassifier:
     # joblib version that partitions the input data among available threads
     # and runs the predictions in parallel
     def predict_joblib(self, X):
-        print(f'Using {self.threads_count} threads')
         y_pred = Parallel(n_jobs=self.threads_count)(delayed(self._predict)(x) for x in X)
         return np.array(y_pred)
 
     # Define a separate function for multiprocessing
     def predict_multiprocess(knn_classifier, X):
-        print(f'Using {knn_classifier.threads_count} threads')
         n = X.shape[0]
         parts = np.array_split(X, knn_classifier.threads_count)
         results = []
