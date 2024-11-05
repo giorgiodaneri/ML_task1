@@ -7,7 +7,7 @@ class KNNClassifierDask:
     def __init__(self, k=3):
         self.k = k
         # for cluster execution need to divide by 16 for best performance
-        self.threads_count = int(psutil.cpu_count(logical=False) / 16)
+        self.threads_count = int(psutil.cpu_count(logical=False) / 8)
 
     def fit(self, X, y):
         self.X_train = da.from_array(X, chunks=(X.shape[0] // self.threads_count, X.shape[1]))
@@ -21,7 +21,6 @@ class KNNClassifierDask:
 
     def predict(self, X):
         # Convert input data to Dask array
-        print(f'Using {self.threads_count} threads')
         X_dask = da.from_array(X, chunks=(X.shape[0] // self.threads_count, X.shape[1]))
         # Use Dask delayed to handle batch prediction
         predictions = [delayed(self._predict)(x) for x in X_dask]

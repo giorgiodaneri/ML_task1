@@ -135,6 +135,5 @@ def predict_parallel_numba(knn, X_test):
     # Parallel processing using extracted data
     y_pred = Parallel(n_jobs=knn.threads_count)(
         delayed(predict_single_numba)(X_train, y_train, k, x) for x in X_test
-        # delayed(knn._predict)(x) for x in X_test
     )
     return y_pred
