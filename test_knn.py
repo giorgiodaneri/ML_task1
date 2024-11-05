@@ -44,6 +44,7 @@ print(f'Using {knn.threads_count} threads')
 knn_numba.fit(X_train, y_train)
 start = time.time()
 predictions_numba = predict_parallel_numba(knn_numba, X_train[X_test])
+
 end = time.time()
 time_numba = end-start
 print(f'Elapsed time for predict_numba {time_numba}')
