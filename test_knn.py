@@ -18,7 +18,7 @@ def check_prediction(actual_predictions, test_predictions):
     return True
 
 # Example with random data
-rows = 100000
+rows = 10000
 cols = 500
 np.random.seed(699)
 X_train = np.random.rand(rows*cols).reshape((rows,cols))
@@ -30,7 +30,7 @@ knn = KNNClassifier(k=2, threads_count=threads)
 knn.fit(X_train, y_train)
 
 # Create random indices to test
-test_size = 1000
+test_size = 100
 num_runs = 30
 thread_num = [8, 16, 32, 64]
 mp_file_path = "results/mp_times.csv"
@@ -52,24 +52,26 @@ print(f'Elapsed time for predict {time_single}')
 print(f'correct {np.sum(y_train[X_test] == predictions)}')
 
 #################### Test Numba implementation ####################
-# print('----- Testing Numba implementation -----')
-# knn_numba = KNNClassifierGPU(k=2)
-# knn_numba.fit(X_train, y_train)
-# blocks_per_grid = 2
-# threads_per_block = 8
-# start = time.time()
-# predictions_numba = knn_numba.predict(X_train[X_test], blocks_per_grid, threads_per_block)
-# end = time.time()
-# time_numba = end-start
-# print(f'Elapsed time for GPU predict {time_numba}')
-# print(f'Average speedup using Numba {round((time_single)/(time_numba),2)}')
-# # compare the output of both methods
-# if np.all(predictions == predictions_numba):
-#     print('All predictions are exactly equal')
-# elif np.allclose(predictions, predictions_numba, rtol=1e-05, atol=1e-08):
-#     print('All predictions are close')
-# else:
-#     print('ERROR: predictions are different')
+print('----- Testing Numba implementation -----')
+knn_numba = KNNClassifierGPU(k=2)
+knn_numba.fit(X_train, y_train)
+blocks_per_grid = 2
+threads_per_block = 8
+start = time.time()
+predictions_numba = knn_numba.predict(X_train[X_test], blocks_per_grid, threads_per_block)
+end = time.time()
+time_numba = end-start
+print(f'Elapsed time for GPU predict {time_numba}')
+print(f'Average speedup using Numba {round((time_single)/(time_numba),2)}')
+# print number of correct predictions
+print(f'correct {np.sum(y_train[X_test] == predictions_numba)}')
+# compare the output of both methods
+if np.all(predictions == predictions_numba):
+    print('All predictions are exactly equal')
+elif np.allclose(predictions, predictions_numba, rtol=1e-05, atol=1e-08):
+    print('All predictions are close')
+else:
+    print('ERROR: predictions are different')
 
 # blocks_per_grid = 4
 # threads_per_block = 8
@@ -85,7 +87,7 @@ print(f'correct {np.sum(y_train[X_test] == predictions)}')
 # elif np.allclose(predictions, predictions_numba, rtol=1e-05, atol=1e-08):
 #     print('All predictions are close')
 # else:
-#     print('ERROR: predictions are different')
+    # print('ERROR: predictions are different')
 
 # blocks_per_grid = 8
 # threads_per_block = 8
@@ -194,25 +196,25 @@ print(f'correct {np.sum(y_train[X_test] == predictions)}')
 #             writer.writerow([threads, dask_time])
 
 # #################### Test Joblib implementation ####################
-print('----- Testing Joblib implementation -----')
-file_exists = os.path.isfile(joblib_file_path)
-with open(joblib_file_path, mode="a", newline="") as csv_file:
-    writer = csv.writer(csv_file)
+# print('----- Testing Joblib implementation -----')
+# file_exists = os.path.isfile(joblib_file_path)
+# with open(joblib_file_path, mode="a", newline="") as csv_file:
+#     writer = csv.writer(csv_file)
 
-    if not file_exists:
-        writer.writerow(["Threads", "Time"])
+#     if not file_exists:
+#         writer.writerow(["Threads", "Time"])
 
-    # iterate over different number of threads
-    for threads in thread_num:
-        knn = KNNClassifier(k=2, threads_count=threads)
-        print(f'Using {knn.threads_count} threads')
-        knn.fit(X_train, y_train)
+#     # iterate over different number of threads
+#     for threads in thread_num:
+#         knn = KNNClassifier(k=2, threads_count=threads)
+#         print(f'Using {knn.threads_count} threads')
+#         knn.fit(X_train, y_train)
 
-        predictions_joblib = np.zeros(test_size)
-        for i in range(num_runs):
-            start = time.time()
-            predictions_joblib = knn.predict_joblib(X_train[X_test])
-            end = time.time()
-            joblib_time = end-start
-            print(f'correct {np.sum(y_train[X_test] == predictions_joblib)}')
-            writer.writerow([threads, joblib_time])
+#         predictions_joblib = np.zeros(test_size)
+#         for i in range(num_runs):
+#             start = time.time()
+#             predictions_joblib = knn.predict_joblib(X_train[X_test])
+#             end = time.time()
+#             joblib_time = end-start
+#             print(f'correct {np.sum(y_train[X_test] == predictions_joblib)}')
+#             writer.writerow([threads, joblib_time])
