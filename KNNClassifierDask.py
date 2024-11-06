@@ -4,10 +4,9 @@ from dask import delayed, compute
 import psutil
 
 class KNNClassifierDask:
-    def __init__(self, k=3):
+    def __init__(self, k=3, threads_count=4):
         self.k = k
-        # for cluster execution need to divide by 16 for best performance
-        self.threads_count = int(psutil.cpu_count(logical=False) / 8)
+        self.threads_count = int(threads_count/2)
 
     def fit(self, X, y):
         self.X_train = da.from_array(X, chunks=(X.shape[0] // self.threads_count, X.shape[1]))

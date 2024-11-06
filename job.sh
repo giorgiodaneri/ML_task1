@@ -3,7 +3,7 @@
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 128
-#SBATCH --time=0-02:00:00
+#SBATCH --time=0-06:00:00
 #SBATCH -p batch
 #SBATCH --output=job-%j.out
 #SBATCH --error=job-%j.err
