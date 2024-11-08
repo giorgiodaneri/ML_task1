@@ -1,7 +1,7 @@
 from KNNClassifier import KNNClassifier
+from KNNClassifier import KNNClassifierDask
 from KNNClassifier import KNNClassifierNumba
 from KNNClassifierGPU import KNNClassifierGPU
-from KNNClassifierDask import KNNClassifierDask
 from KNNClassifier import predict_parallel_numba
 from joblib import Parallel, delayed
 from numba import int32, cuda
@@ -28,10 +28,9 @@ print(f'X_train shape {X_train.shape} - y_train shape {y_train.shape}')
 threads = int(psutil.cpu_count(logical=False) / 2)
 knn = KNNClassifier(k=2, threads_count=threads)
 knn.fit(X_train, y_train)
-
 # Create random indices to test
 test_size = 100
-num_runs = 30
+num_runs = 2
 thread_num = [8, 16, 32, 64]
 mp_file_path = "results/mp_times.csv"
 dask_file_path = "results/dask_times.csv"
@@ -51,29 +50,11 @@ print(f'Elapsed time for predict {time_single}')
 # Calculate the number of equal elements
 print(f'correct {np.sum(y_train[X_test] == predictions)}')
 
-#################### Test Numba implementation ####################
-print('----- Testing Numba implementation -----')
-knn_numba = KNNClassifierGPU(k=2)
-knn_numba.fit(X_train, y_train)
-blocks_per_grid = 2
-threads_per_block = 8
-start = time.time()
-predictions_numba = knn_numba.predict(X_train[X_test], blocks_per_grid, threads_per_block)
-end = time.time()
-time_numba = end-start
-print(f'Elapsed time for GPU predict {time_numba}')
-print(f'Average speedup using Numba {round((time_single)/(time_numba),2)}')
-# print number of correct predictions
-print(f'correct {np.sum(y_train[X_test] == predictions_numba)}')
-# compare the output of both methods
-if np.all(predictions == predictions_numba):
-    print('All predictions are exactly equal')
-elif np.allclose(predictions, predictions_numba, rtol=1e-05, atol=1e-08):
-    print('All predictions are close')
-else:
-    print('ERROR: predictions are different')
-
-# blocks_per_grid = 4
+# #################### Test Numba implementation ####################
+# print('----- Testing Numba implementation -----')
+# knn_numba = KNNClassifierGPU(k=2)
+# knn_numba.fit(X_train, y_train)
+# blocks_per_grid = 2
 # threads_per_block = 8
 # start = time.time()
 # predictions_numba = knn_numba.predict(X_train[X_test], blocks_per_grid, threads_per_block)
@@ -81,38 +62,8 @@ else:
 # time_numba = end-start
 # print(f'Elapsed time for GPU predict {time_numba}')
 # print(f'Average speedup using Numba {round((time_single)/(time_numba),2)}')
-# # compare the output of both methods
-# if np.all(predictions == predictions_numba):
-#     print('All predictions are exactly equal')
-# elif np.allclose(predictions, predictions_numba, rtol=1e-05, atol=1e-08):
-#     print('All predictions are close')
-# else:
-    # print('ERROR: predictions are different')
-
-# blocks_per_grid = 8
-# threads_per_block = 8
-# start = time.time()
-# predictions_numba = knn_numba.predict(X_train[X_test], blocks_per_grid, threads_per_block)
-# end = time.time()
-# time_numba = end-start
-# print(f'Elapsed time for GPU predict {time_numba}')
-# print(f'Average speedup using Numba {round((time_single)/(time_numba),2)}')
-# # compare the output of both methods
-# if np.all(predictions == predictions_numba):
-#     print('All predictions are exactly equal')
-# elif np.allclose(predictions, predictions_numba, rtol=1e-05, atol=1e-08):
-#     print('All predictions are close')
-# else:
-#     print('ERROR: predictions are different')
-
-# blocks_per_grid = 8
-# threads_per_block = 16
-# start = time.time()
-# predictions_numba = knn_numba.predict(X_train[X_test], blocks_per_grid, threads_per_block)
-# end = time.time()
-# time_numba = end-start
-# print(f'Elapsed time for GPU predict {time_numba}')
-# print(f'Average speedup using Numba {round((time_single)/(time_numba),2)}')
+# # print number of correct predictions
+# print(f'correct {np.sum(y_train[X_test] == predictions_numba)}')
 # # compare the output of both methods
 # if np.all(predictions == predictions_numba):
 #     print('All predictions are exactly equal')
@@ -171,29 +122,29 @@ else:
 #             print(f'correct {np.sum(y_train[X_test] == predictions_numba)}')
 #             writer.writerow([threads, numba_time])   
 
-# #################### Test Dask implementation ####################
-# print('----- Testing Dask implementation -----')
-# file_exists = os.path.isfile(dask_file_path)
-# with open(dask_file_path, mode="a", newline="") as csv_file:
-#     writer = csv.writer(csv_file)
+#################### Test Dask implementation ####################
+print('----- Testing Dask implementation -----')
+file_exists = os.path.isfile(dask_file_path)
+with open(dask_file_path, mode="a", newline="") as csv_file:
+    writer = csv.writer(csv_file)
 
-#     if not file_exists:
-#         writer.writerow(["Threads", "Time"])
+    if not file_exists:
+        writer.writerow(["Threads", "Time"])
 
-#     # iterate over different number of threads
-#     for threads in thread_num:
-#         knn_dask = KNNClassifierDask(k=2, threads_count=threads)
-#         print(f'Using {knn_dask.threads_count} threads')
-#         knn_dask.fit(X_train, y_train)
+    # iterate over different number of threads
+    for threads in thread_num:
+        knn_dask = KNNClassifierDask(k=2, threads_count=threads)
+        print(f'Using {knn_dask.threads_count} threads')
+        knn_dask.fit(X_train, y_train)
 
-#         predictions_dask = np.zeros(test_size)
-#         for i in range(num_runs):
-#             start = time.time()
-#             predictions_dask = knn_dask.predict(X_train[X_test])
-#             end = time.time()
-#             dask_time = end-start
-#             print(f'correct {np.sum(y_train[X_test] == predictions_dask)}')
-#             writer.writerow([threads, dask_time])
+        predictions_dask = np.zeros(test_size)
+        for i in range(num_runs):
+            start = time.time()
+            predictions_dask = knn_dask.predict(X_train[X_test])
+            end = time.time()
+            dask_time = end-start
+            print(f'correct {np.sum(y_train[X_test] == predictions_dask)}')
+            writer.writerow([threads, dask_time])
 
 # #################### Test Joblib implementation ####################
 # print('----- Testing Joblib implementation -----')
