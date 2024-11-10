@@ -1,7 +1,6 @@
 import numpy as np
 from multiprocessing import Pool
 from joblib import Parallel, delayed
-from line_profiler import profile
 from numba import float64, int32
 from numba.experimental import jitclass
 from numba import njit
@@ -93,7 +92,6 @@ class KNNClassifierNumba:
         sqr_diff_sum = np.sum(sqr_diff)
         return np.sqrt(sqr_diff_sum)
 
-    @profile
     def predict(self, X):
         y_pred = np.empty(X.shape[0], dtype=np.int32)
         for i in range(X.shape[0]):

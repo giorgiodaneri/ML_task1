@@ -6,14 +6,14 @@ import os
 
 print('----- Testing Joblib implementation -----')
 # Example with random data
-rows = 10000
+rows = 100000
 cols = 500
 np.random.seed(699)
 X_train = np.random.rand(rows*cols).reshape((rows,cols))
 y_train = np.random.randint(2, size=rows)
 print(f'X_train shape {X_train.shape} - y_train shape {y_train.shape}')
 # Create random indices to test
-test_size = 100
+test_size = 1000
 
 # ---------------------- Simulation parameters ---------------------- #
 num_runs = 30
