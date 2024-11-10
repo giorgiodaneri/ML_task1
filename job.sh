@@ -14,4 +14,4 @@ module load lang/Python/3.8.6-GCCcore-10.2.0
 # activate the virtual environment
 source /home/users/gdaneri/ML_task1/.dask_venv/bin/activate
 # Run the python script and redirect the output to a file
-python3 /home/users/gdaneri/ML_task1/test_knn.py
+python3 /home/users/gdaneri/ML_task1/test_knn_dask1.py
