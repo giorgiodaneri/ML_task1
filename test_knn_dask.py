@@ -1,4 +1,4 @@
-from KNNClassifier import KNNClassifierDask
+from KNNClassifierDask import KNNClassifierDask
 import numpy as np
 import time
 import csv

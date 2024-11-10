@@ -14,7 +14,7 @@ rows = 10000
 cols = 500
 np.random.seed(699)
 X_train = np.random.rand(rows*cols).reshape((rows,cols))
-y_train = np.random.randint(2, size=rows)
+y_train = int32(np.random.randint(2, size=rows))
 print(f'X_train shape {X_train.shape} - y_train shape {y_train.shape}')
 # Create random indices to test
 test_size = 100
