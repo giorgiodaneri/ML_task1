@@ -23,7 +23,7 @@ test_size = 1000
 num_runs = 30
 thread_num = [8, 16, 32, 64]
 
-numba_file_path = "results/numba_times.csv"
+numba_file_path = "../results/numba_times.csv"
 X_test = np.random.randint(rows, size=test_size)
 
 # Check if the file exists to determine if we need to write headers

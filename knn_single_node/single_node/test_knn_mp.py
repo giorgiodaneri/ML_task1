@@ -20,7 +20,7 @@ test_size = 1000
 num_runs = 30
 thread_num = [8, 16, 32, 64]
 
-mp_file_path = "results/mp_times.csv"
+mp_file_path = "../results/mp_times.csv"
 X_test = np.random.randint(rows, size=test_size)
 file_exists = os.path.isfile(mp_file_path)
 with open(mp_file_path, mode="a", newline="") as csv_file:

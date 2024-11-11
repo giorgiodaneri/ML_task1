@@ -19,7 +19,7 @@ test_size = 1000
 num_runs = 30
 thread_num = [8, 16, 32, 64]
 
-joblib_file_path = "results/joblib_times.csv"
+joblib_file_path = "../results/joblib_times.csv"
 X_test = np.random.randint(rows, size=test_size)
 
 file_exists = os.path.isfile(joblib_file_path)

@@ -19,7 +19,7 @@ test_size = 1000
 num_runs = 30
 thread_num = [8, 16, 32, 64]
 
-dask_file_path = "results/dask_times.csv"
+dask_file_path = "../results/dask_times.csv"
 X_test = np.random.randint(rows, size=test_size)
 file_exists = os.path.isfile(dask_file_path)
 with open(dask_file_path, mode="a", newline="") as csv_file:

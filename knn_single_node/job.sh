@@ -15,7 +15,7 @@ module load lang/Python/3.8.6-GCCcore-10.2.0
 source /path/to/your/virtual/env/bin/activate
 # Run the python script and redirect the output to a file
 # change the name of the python script to the one you want to run
-python3 test_knn_numba.py
+python3 single_node/test_knn_numba.py
 # python3 test_knn_dask.py
 # python3 test_knn_mp.py
 # python3 test_knn_joblib.py
